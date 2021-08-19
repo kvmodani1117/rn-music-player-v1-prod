@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "rn-music-player-app",
-    "slug": "rn-music-player-app",
+    "name": "Lofi Music",
+    "slug": "lofi-music-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "updates": {
@@ -17,13 +17,21 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.modani.lofi-music-app",
+      "buildNumber": "1.0.0",
       "supportsTablet": true
     },
     "android": {
+      "package": "com.modani.lofi_music_app",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "permissions": ["READ_EXTERNAL_STORAGE","WRITE_EXTERNAL_STORAGE","RECORD_AUDIO"]
+    },
+    "androidStatusBar": {
+      "hidden": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
