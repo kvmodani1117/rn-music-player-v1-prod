@@ -1,5 +1,5 @@
 import React, { Component, createRef } from 'react';
-import { Text, View, StyleSheet, ScrollView, Dimensions, Animated, TextInput } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Dimensions, Animated, TextInput, Button, Alert } from 'react-native';
 import { AudioContext } from '../context/AudioProvider'
 import { LayoutProvider, RecyclerListView } from 'recyclerlistview'
 import AudioListItem from '../components/AudioListItem';
@@ -12,6 +12,9 @@ import Colors from '../misc/Colors';
 import TabBarAnimation from '../components/TabBarAnimation';
 import * as Animatable from 'react-native-animatable';
 import { DataProvider } from 'recyclerlistview';
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
+
 
 const ITEM_SIZE = 50;
 const WIDTH = Dimensions.get('window').width;
@@ -47,13 +50,13 @@ export class AudioList extends Component {
     handleAudioPress = async (audio) => {
         // console.log("handleAudioPress");
         await selectAudio(audio, this.context);
-        
+
     }
 
 
     componentDidMount() {
         this.context.loadPreviousAudio();
-        this.setState({...this.state, displaySongs: this.context.audioFiles});
+        this.setState({ ...this.state, displaySongs: this.context.audioFiles });
         // this.viewElement.current.animate("fadeInUp", 2000);
         // console.log("this.viewElement.current",this.viewElement);
     }
@@ -135,9 +138,75 @@ export class AudioList extends Component {
         let displayItems = await this.context.audioFiles.filter(song => {
             return regex.test(song.filename);
         });
-        this.setState({...this.state, displaySongs: displayItems });
+        this.setState({ ...this.state, displaySongs: displayItems });
     }
 
+
+
+    openShareDialogAsync = async (currentItem) => {
+        // console.log("currentItem----->", currentItem);
+        if (!(await Sharing.isAvailableAsync())) {
+            alert(`Uh oh, sharing isn't available on your platform`);
+            return;
+        }
+        // console.log("Share supported!");
+
+        const url = currentItem.uri;
+        // messageText = 'Hey there, Listen to this music!';        
+        // const options = {
+        //     mimeType: ['audio/aac', 'audio/ogg', 'audio/midi', 'audio/aac-adts'], //image/jpeg
+        //     dialogTitle: messageText,
+        // };
+        // await Sharing.shareAsync(url, options);
+        await Sharing.shareAsync(url);
+        // await Sharing.shareAsync(selectedImage.localUri);
+    };
+
+    // deleteAudioFromDevice = async (currentItem) => {
+    //     try {
+    //         const url = currentItem.uri;
+    //         Alert.alert(
+    //             "Delete",
+    //             "Are you sure you want to delete this file from device?",
+    //             [
+    //                 {
+    //                     text: 'Delete',
+    //                     onPress: async () => {
+    //                         console.log("FileSystem.documentDirectory: ", FileSystem.documentDirectory);
+    //                         await FileSystem.deleteAsync( FileSystem.documentDirectory + url);
+    //                         console.log("deleted file on url: ", url);
+    //                     }
+    //                 }
+    //             ],
+    //             { cancelable: true }
+    //         );
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+
+    // }
+
+    
+
+    //more sort of working here...
+    // deleteAudioFromDevice = async (currentItem) => {
+    //     try {
+    //         // Requests permissions for external directory
+    //         const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync(currentItem.uri);
+    //         console.log("permissions: ", permissions);
+    //         if (permissions.granted) {
+    //             // Gets SAF URI from response
+    //             const uri = permissions.directoryUri;
+    //             console.log("uri: ", uri);
+    //             // Gets all files inside of selected directory
+    //             const files = await FileSystem.StorageAccessFramework.readDirectoryAsync(uri);
+    //             console.log("files in directory: ", files);
+    //             alert(`Files inside ${uri}:\n\n${JSON.stringify(files)}`);
+    //           }
+    //     } catch (error) {
+    //         console.log("Console error: ", error);
+    //     }
+    // }
 
 
 
@@ -163,6 +232,9 @@ export class AudioList extends Component {
                                     value={this.state.search}
                                 />
                             </View>
+                            {/* <View>
+                                <Button title="Share" onPress={this.openShareDialogAsync} />
+                            </View> */}
                             <RecyclerListView
                                 // onChange={onChange}
                                 // onScroll={Animated.event(
@@ -172,27 +244,27 @@ export class AudioList extends Component {
                                 // ref = {this.viewElement}
                                 // dataProvider={dataProvider}
                                 dataProvider={
-                                    this.state.search ? 
-                                    new DataProvider((row1, row2) => row1 !== row2).cloneWithRows(this.state.displaySongs) 
-                                    : dataProvider}
+                                    this.state.search ?
+                                        new DataProvider((row1, row2) => row1 !== row2).cloneWithRows(this.state.displaySongs)
+                                        : dataProvider}
                                 layoutProvider={this.layoutProvider}
                                 rowRenderer={this.rowRenderer}
                                 extendedState={{ isPlaying }}
                             />
                             <OptionModal
-                                // onPlayPress={() => console.log('Playing audio')}
-                                // onPlayListPress={() => {
-                                //     this.context.updateState(this.context, {
-                                //         addToPlayList: this.currentItem
-                                //     });
-                                //     this.props.navigation.navigate('PlayList');
-                                //     this.setState({ ...this.state, optionModalVisible: false });  //added by me
-                                // }}
                                 options={[
                                     {
                                         title: 'Add to playlist',
                                         onPress: this.navigateToPlaylist
                                     },
+                                    {
+                                        title: 'Share this audio',
+                                        onPress: () => this.openShareDialogAsync(this.currentItem)
+                                    },
+                                    // {
+                                    //     title: 'Delete this audio',
+                                    //     onPress: () => this.deleteAudioFromDevice(this.currentItem)
+                                    // },
                                 ]}
                                 currentItem={this.currentItem}
                                 onClose={() => {

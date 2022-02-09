@@ -6,6 +6,7 @@ import AppNavigator from './app/navigation/AppNavigator';
 import AudioProvider from './app/context/AudioProvider';
 import Colors from './app/misc/Colors';
 import {Audio} from 'expo-av';
+// import MusicControl from 'react-native-music-control';
 
 const MyTheme = {
   ...DefaultTheme,
@@ -39,7 +40,10 @@ export default function App() {
 
 
   useEffect(() => {
-    audioConfig()
+    audioConfig();
+    // MusicControl.setNowPlaying({
+
+    // });
   });
   const audioConfig = async () => {
     await Audio.setAudioModeAsync({

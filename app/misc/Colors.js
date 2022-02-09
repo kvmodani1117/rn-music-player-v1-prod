@@ -8,9 +8,10 @@ export default {
     ACTIVE_FONT: '#fff',
 
 
-    // APP_BG: '#270e43',
+    // APP_BG: '#bbe6f3', //skyblue
+    // APP_BG: '#ffe696', //yellow
     // APP_BG: '#1c0436',      //more darker...
-    APP_BG: '#1d0f2f',     //good one
+    APP_BG: '#1d0f2f',     //good one used in other apks
     // FONT_DARK: '#775696',
     FONT_DARK: '#3d225e',
     // FONT_LIGHT: '#e1b4f8',

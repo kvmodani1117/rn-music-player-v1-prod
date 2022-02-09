@@ -1,9 +1,15 @@
 import { storeAudioForNextOpening } from "./Helper";
+// import MusicControl from 'react-native-music-control';
 
 //play audio
 export const play = async (playbackObj, uri, lastPosition) => {
     try {
         if (!lastPosition) {
+            // const {
+            //     soundObj,
+            // } = context;
+            // console.log("playbackObj-->",playbackObj);
+            // console.log("soundObj--------------->",soundObj);
             const status = await playbackObj.loadAsync(
                 { uri: uri },
                 { shouldPlay: true, progressUpdateIntervalMillis: 1000 }
@@ -128,6 +134,14 @@ export const selectAudio = async (audio, context, playListInfo = {}) => {
         if (soundObj.isLoaded && currentAudio.id !== audio.id) {
             const status = await playNext(playbackObj, audio.uri);
             const index = audioFiles.findIndex(({ id }) => id === audio.id);
+            // console.log("soundObj====>",soundObj);
+            console.log("currentAudio====>",currentAudio);
+            // MusicControl.setNowPlaying({
+            //     title: currentAudio.filename,
+            //     duration: currentAudio.duration, // (Seconds)
+            //     color: 0xffffff, // Android Only - Notification Color
+            //     colorized: true, // Android 8+ Only - Notification Color extracted from the artwork. Set to false to use the color property instead
+            //   })
             updateState(
                 context,
                 {

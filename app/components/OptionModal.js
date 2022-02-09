@@ -16,7 +16,7 @@ const OptionModal = ({
     return (
         <>
             <StatusBar hidden />
-            <Modal animationType='slide' transparent visible={visible} >
+            <Modal animationType='slide' transparent visible={visible} onRequestClose={onClose}>
                 <View style={styles.modal}>
                     <Text style={styles.title} numberOfLines={2} >
                         {filename}

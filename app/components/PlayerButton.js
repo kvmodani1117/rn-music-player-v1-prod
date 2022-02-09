@@ -14,9 +14,11 @@ const PlayerButton = (props) => {
                 return   'play';
                 // return   'playcircleo';
             case 'NEXT':
-                return  'forward';
+                // return  'forward';
+                return  'caretright';
             case 'PREV':
-                return  'banckward';
+                // return  'banckward';
+                return  'caretleft';
         
             default:
                 break;

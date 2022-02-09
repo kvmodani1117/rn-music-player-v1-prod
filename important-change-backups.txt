@@ -1,0 +1,35 @@
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    audioCount: {
+        textAlign: 'right',
+        color: Colors.FONT_LIGHT,
+        fontSize: 14
+    },
+    audioCountContainer: {
+        flexDirection: 'row',
+        paddingHorizontal: 15,
+        justifyContent: 'space-between',
+    },
+    midBannerContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    audioTitle: {
+        fontSize: 25,
+        fontWeight: 'bold',
+        color: Colors.FONT_LIGHT,
+        padding: 15,
+        alignSelf: 'center',
+    },
+    audioContollers: {
+        width: WIDTH,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        paddingBottom: 20,
+        alignItems: 'center',
+        // marginBottom: 90,
+    },
+})

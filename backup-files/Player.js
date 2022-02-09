@@ -20,7 +20,7 @@ const WIDTH = Dimensions.get('window').width;
 
 const Player = (props) => {
     const context = useContext(AudioContext);
-    // console.log("context=========>",context.audioFiles.slice(0,3));
+    console.log("context=========>",context.audioFiles.slice(0,3));
     const { playbackPosition, playbackDuration, currentAudio } = context;
 
     const [currentPosition, setCurrentPosition] = useState(0);
@@ -35,7 +35,7 @@ const Player = (props) => {
     let actualImgPath = `../../assets/img3.png`;
     useEffect(() => {
         context.loadPreviousAudio();
-        // console.log(context.currentAudio);
+        console.log(context.currentAudio);
         // console.log("1");
         setRandomInt(Math.floor(Math.random() * 20) + 1);
         // console.log("BannerImage[1]---> ", BannerImage[randomInt].imgPath);
@@ -253,7 +253,7 @@ const Player = (props) => {
                         color={context.isPlaying ? Colors.ACTIVE_BG : Colors.FONT_MEDIUM}
                     />  */}
                     <Image
-                        style={{ width: 240, height: 240, borderRadius: 30, margin: 15 }}
+                        style={{ width: 240, height: 240, borderRadius: 30, margin: 20 }}
                         // style={{ width: 260, height: 260, borderRadius: 30, margin: 20 }}
                         // source={require("../../assets/img3.png")}
                         source={BannerImage[randomInt].imgPath}
@@ -265,72 +265,61 @@ const Player = (props) => {
                     duration={3000}
                     delay={200}
                     useNativeDriver={true}
-                >
-                    {/* <PlayerButton iconType='PREV' onPress={handlePrevious} iconColor={Colors.ACTIVE_FONT} /> */}
+                    style={styles.audioPlayerContainer}>
                     <Text numberOfLines={1} style={styles.audioTitle}>
                         {context.currentAudio.filename}
                     </Text>
-                    {/* <PlayerButton iconType='NEXT' onPress={handleNext} iconColor={Colors.ACTIVE_FONT} /> */}
-                </Animatable.View>
-                <Animatable.View
-                    animation='bounceInRight'
-                    duration={3000}
-                    delay={200}
-                    useNativeDriver={true}
-                    style={styles.audioPlayerContainer}>
-                    
-                    <View style={{width: '100%', flexDirection: 'row'}}>  
-                        <View style={{justifyContent: 'flex-start', alignSelf: 'center' , width: '82%'}}>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
-                                <View style={{width: '16%'}}>
-                                    <Text style={{ color: Colors.FONT_MEDIUM, textAlign: 'left', marginLeft: 10}} >{currentPosition ? currentPosition : renderCurrentTime()}</Text>
-                                </View>
-                                <View style={{width: '68%'}}>
-                                    <Slider
-                                        style={{ 
-                                            height: 20
-                                        }}
-                                        minimumValue={0}
-                                        maximumValue={1}
-                                        value={calculateSeekBar()}
-                                        minimumTrackTintColor={Colors.ACTIVE_BG}
-                                        maximumTrackTintColor="purple"
-                                        thumbTintColor={Colors.FONT_LIGHT}
-                                        onValueChange={(value) => {
-                                            setCurrentPosition(convertTime(value * context.currentAudio.duration));
-                                        }}
-                                        onSlidingStart={async () => {
-                                            if (!context.isPlaying) { return };
-                                            try {
-                                                await pause(context.playbackObj);
-                                            } catch (error) {
-                                                // console.log("error inside onSlidingStart callback : ", error);
-                                            }
-                                        }}
-                                        onSlidingComplete={async value => {
-                                            await moveAudio(context, value)
-                                            setCurrentPosition(0);
-                                        }}
-                                    />
-                                </View>
-                                <View style={{width: '16%'}}>
-                                    <Text style={{ color: Colors.FONT_MEDIUM, alignContent: 'flex-end', textAlign: 'right', marginRight: 10}} >{convertTime(context.currentAudio.duration)}</Text>
-                                </View>
-                            </View>
-                        </View>
-
-                        <View style={styles.audioContollers}>
-                            {/* <PlayerButton iconType='PREV' onPress={handlePrevious} iconColor={Colors.ACTIVE_FONT} /> */}
-                            <PlayerButton
-                                onPress={handlePlayPause}
-                                style={{ margin: 5 }} //initially marginHorizontal: 25
-                                iconType={context.isPlaying ? 'PLAY' : 'PAUSE'}
-                                iconColor={context.isPlaying ? Colors.ACTIVE_BG : Colors.ACTIVE_BG}
-                                size={50}
-                            />
-                            {/* <PlayerButton iconType='NEXT' onPress={handleNext} iconColor={Colors.ACTIVE_FONT} /> */}
-                        </View>
+                    <View style={{ alignSelf: 'center', width: '100%'}}>
+                        <Slider
+                            style={{ 
+                                // width: WIDTH, 
+                                height: 20
+                            }}
+                            minimumValue={0}
+                            maximumValue={1}
+                            value={calculateSeekBar()}
+                            minimumTrackTintColor={Colors.ACTIVE_BG}
+                            maximumTrackTintColor="purple"
+                            thumbTintColor={Colors.FONT_LIGHT}
+                            onValueChange={(value) => {
+                                setCurrentPosition(convertTime(value * context.currentAudio.duration));
+                            }}
+                            onSlidingStart={async () => {
+                                if (!context.isPlaying) { return };
+                                try {
+                                    await pause(context.playbackObj);
+                                } catch (error) {
+                                    console.log("error inside onSlidingStart callback : ", error);
+                                }
+                            }}
+                            onSlidingComplete={async value => {
+                                await moveAudio(context, value)
+                                setCurrentPosition(0);
+                            }}
+                        />
                     </View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 15 }}>
+                        <Text style={{ color: Colors.FONT_MEDIUM }} >{currentPosition ? currentPosition : renderCurrentTime()}</Text>
+                        <Text style={{ color: Colors.FONT_MEDIUM }} >{convertTime(context.currentAudio.duration)}</Text>
+                    </View>
+                    <View style={styles.audioContollers}>
+                        <PlayerButton iconType='PREV' onPress={handlePrevious} iconColor={Colors.ACTIVE_FONT} />
+                        <PlayerButton
+                            onPress={handlePlayPause}
+                            style={{ marginHorizontal: 25 }}
+                            iconType={context.isPlaying ? 'PLAY' : 'PAUSE'}
+                            iconColor={context.isPlaying ? Colors.ACTIVE_BG : Colors.ACTIVE_BG}
+                            size={70}
+                        />
+                        <PlayerButton iconType='NEXT' onPress={handleNext} iconColor={Colors.ACTIVE_FONT} />
+                    </View>
+                    {/* <View style={{height: 240}}>
+                        <FlatList
+                            data={context.audioFiles.slice(context.currentAudioIndex + 1, context.currentAudioIndex + 1+3)}
+                            renderItem={(data) => rowRenderer(data.item, 1)}
+                            contentContainerStyle={{ paddingBottom: 90 }}
+                        />
+                    </View> */}
                 </Animatable.View>
                 <View style={{height: 240}}>
                         <FlatList
@@ -362,11 +351,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     midBannerContainer: {
-        // flex: 1,
+        flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        margin: 5,
-        // backgroundColor: 'red'
+        alignItems: 'center'
     },
     audioTitle: {
         fontSize: 22,   //commented now... initially fontSize: 25
@@ -374,26 +361,23 @@ const styles = StyleSheet.create({
         color: Colors.FONT_LIGHT,
         padding: 10,  //commented now... initially padding: 15
         alignSelf: 'center',
-        width: WIDTH - 40,
     },
     audioContollers: {
-        // width: WIDTH,   //commented just now...to check new alignment
+        width: WIDTH,
         flexDirection: 'row',
-        // justifyContent: 'center',   //commented just now...to check new alignment
-        justifyContent: 'flex-end',
-        // paddingBottom: 20,     //commented just now...to check new alignment
-        // alignItems: 'center',
-        // alignSelf: 'center',
-        // elevation: 20,
-        // backgroundColor: 'blue'
+        justifyContent: 'center',
+        paddingBottom: 20,
+        alignItems: 'center',
+        alignSelf: 'center',
+        elevation: 20
         // marginBottom: 90,
     },
     audioPlayerContainer: {
-        // backgroundColor: '#ffffff',
+        backgroundColor: '#ffffff',
         width: WIDTH - 40,
         alignSelf: 'center',
         borderRadius: 30,
-        // elevation: 10,
+        elevation: 10,
         marginBottom: 10
     },
 })

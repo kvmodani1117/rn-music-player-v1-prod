@@ -64,6 +64,7 @@ export class AudioProvider extends Component {
             mediaType: 'audio',
             first: media.totalCount,
         });
+        // console.log("audiosssss:",media.assets[0].uri);
         this.totalAudioCount = media.totalCount;
         // console.log("media.assets.length : ", media.assets.length);
         this.setState({
