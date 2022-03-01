@@ -15,6 +15,7 @@ import BannerImage from '../misc/BannerImage';
 import AudioList from '../screens/AudioList';
 import AudioListItem from '../components/AudioListItem';
 import OptionModal from '../components/OptionModal';
+// import MusicControl from 'react-native-music-control';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -170,7 +171,6 @@ const Player = (props) => {
     const handleAudioPress = async (audio) => {
         // console.log("audio############:",audio);
         await selectAudio(audio, context);
-
     }
 
     const rowRenderer = (item, index) => {
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
         // backgroundColor: 'red'
     },
     audioTitle: {
-        fontSize: 22,   //commented now... initially fontSize: 25
+        fontSize: 28,   //commented now... initially fontSize: 25
         fontWeight: 'bold',
         color: Colors.FONT_LIGHT,
         padding: 10,  //commented now... initially padding: 15

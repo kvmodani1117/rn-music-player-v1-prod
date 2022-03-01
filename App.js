@@ -1,12 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useRef, useState, useEffect, useContext} from 'react';
 import { AppState } from 'react-native';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import AppNavigator from './app/navigation/AppNavigator';
 import AudioProvider from './app/context/AudioProvider';
 import Colors from './app/misc/Colors';
 import {Audio} from 'expo-av';
-// import MusicControl from 'react-native-music-control';
+import { AudioContext } from './app/context/AudioProvider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import MusicControl from 'react-native-music-control';
 
 const MyTheme = {
   ...DefaultTheme,
@@ -38,12 +40,28 @@ export default function App() {
   //   console.log("AppState: ", appState.current);
   // }
 
-
-  useEffect(() => {
+  const context = useContext(AudioContext);
+  useEffect(async() => {
     audioConfig();
+   
+    // Showing Controls on notification Bar, from music present in AsyncStorage, as soon as App launches.
+    // let previousAudio = JSON.parse(await AsyncStorage.getItem('previousAudio'));
+    // console.log("asynstorage->previousAudio.audio : ", (previousAudio).audio.filename);
     // MusicControl.setNowPlaying({
-
-    // });
+    //   title: previousAudio.audio.filename,
+    //   duration: previousAudio.audio.duration, // (Seconds)
+    //   description: 'You have a great music taste!',
+    //   color: 0xff00001,
+    //   // color: 0xffffff, // Android Only - Notification Color
+    //   colorized: true, // Android 8+ Only - Notification Color extracted from the artwork. Set to false to use the color property instead
+    //   });
+    // MusicControl.enableControl('play', true)
+    // MusicControl.enableControl('pause', true)
+    // MusicControl.enableControl('stop', false)
+    // MusicControl.enableControl('nextTrack', true)
+    // MusicControl.enableControl('previousTrack', false)
+    // MusicControl.enableControl('closeNotification', true, { when: 'paused' })
+    
   });
   const audioConfig = async () => {
     await Audio.setAudioModeAsync({
@@ -57,6 +75,8 @@ export default function App() {
       // interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
       playThroughEarpieceAndroid: false
     });
+    // console.log("context---->: ",context);
+    
   }
 
   return (
