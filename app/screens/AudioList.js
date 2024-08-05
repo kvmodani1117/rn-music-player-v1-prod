@@ -1,5 +1,16 @@
 import React, { Component, createRef } from 'react';
-import { Text, View, StyleSheet, ScrollView, Dimensions, Animated, TextInput, Button, Alert } from 'react-native';
+import { 
+    Text, 
+    View, 
+    StyleSheet, 
+    ScrollView, 
+    Dimensions, 
+    Animated, 
+    TextInput, 
+    Keyboard, 
+    TouchableWithoutFeedback,
+    StatusBar,
+} from 'react-native';
 import { AudioContext } from '../context/AudioProvider'
 import { LayoutProvider, RecyclerListView } from 'recyclerlistview'
 import AudioListItem from '../components/AudioListItem';
@@ -14,9 +25,11 @@ import * as Animatable from 'react-native-animatable';
 import { DataProvider } from 'recyclerlistview';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
+import { AntDesign } from '@expo/vector-icons';
 
 
 const ITEM_SIZE = 50;
+const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
 
 export class AudioList extends Component {
@@ -29,75 +42,40 @@ export class AudioList extends Component {
             optionModalVisible: false,
             search: '',
             displaySongs: [],
-            // scrollY : new Animated.Value(0).current
         }
         this.currentItem = {}
-        // this.scrollY = createRef(new Animated.Value(0)).current;
-        // this.scrollY = createRef(new Animated.Value(0));
-        // console.log("scrollY==> ", this.scrollY);
-        // this.viewElement = createRef(null);
     }
-
-    // scrollY  = this.myRef;
 
     layoutProvider = new LayoutProvider((i) => 'audio', (type, dim) => {
         dim.width = Dimensions.get('window').width;
         dim.height = 70;
     });
 
-
-
     handleAudioPress = async (audio) => {
-        // console.log("handleAudioPress");
         await selectAudio(audio, this.context);
 
     }
 
-
     componentDidMount() {
         this.context.loadPreviousAudio();
         this.setState({ ...this.state, displaySongs: this.context.audioFiles });
-        // this.viewElement.current.animate("fadeInUp", 2000);
-        // console.log("this.viewElement.current",this.viewElement);
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (this.state.search !== prevState.search) {
-            // console.log('search changed');
             this.filterSearch();
         }
-        // this.viewElement.current.animate("fadeInUp", 2000);
-        // console.log("componentDidUpdate-----this.viewElement.current ===>\n",this.viewElement);
     }
 
-
-
     rowRenderer = (type, item, index, extendedState) => {
-        // console.log("item ==> ", item);
-        // const inputRange = [
-        //     -1,
-        //     0,
-        //     ITEM_SIZE * index,
-        //     ITEM_SIZE * (index + 2),
-        // ]
-        // const scale = this.scrollY.interpolate({
-        //     inputRange,
-        //     outputRange: [1, 1, 1, 0]
-        // })
-
 
         return (
             <Animatable.View
                 animation='fadeInUp'
                 duration={1000}
                 delay={index * 100}
-                // ref={this.viewElement}
                 useNativeDriver={true}
-
-            // iterationCount='infinite'
-            // onAnimationEnd={}
             >
-                {/* <Animated.View style={{transform: [{scale}]}> */}
 
                 <AudioListItem
                     title={item.filename}
@@ -131,10 +109,13 @@ export class AudioList extends Component {
         this.setState({ ...this.state, search: text });
     };
 
+    clearSearchHandler = () => {
+        this.setState({ ...this.state, search: '' });
+        Keyboard.dismiss();
+    };
+
     filterSearch = async () => {
-        // console.log("filterSearch");
         var regex = new RegExp(this.state.search, "i");
-        // let displayItems = await this.context.dataProvider._data.filter(song => {
         let displayItems = await this.context.audioFiles.filter(song => {
             return regex.test(song.filename);
         });
@@ -144,22 +125,13 @@ export class AudioList extends Component {
 
 
     openShareDialogAsync = async (currentItem) => {
-        // console.log("currentItem----->", currentItem);
         if (!(await Sharing.isAvailableAsync())) {
             alert(`Uh oh, sharing isn't available on your platform`);
             return;
         }
-        // console.log("Share supported!");
 
         const url = currentItem.uri;
-        // messageText = 'Hey there, Listen to this music!';        
-        // const options = {
-        //     mimeType: ['audio/aac', 'audio/ogg', 'audio/midi', 'audio/aac-adts'], //image/jpeg
-        //     dialogTitle: messageText,
-        // };
-        // await Sharing.shareAsync(url, options);
         await Sharing.shareAsync(url);
-        // await Sharing.shareAsync(selectedImage.localUri);
     };
 
     // deleteAudioFromDevice = async (currentItem) => {
@@ -186,29 +158,6 @@ export class AudioList extends Component {
 
     // }
 
-    
-
-    //more sort of working here...
-    // deleteAudioFromDevice = async (currentItem) => {
-    //     try {
-    //         // Requests permissions for external directory
-    //         const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync(currentItem.uri);
-    //         console.log("permissions: ", permissions);
-    //         if (permissions.granted) {
-    //             // Gets SAF URI from response
-    //             const uri = permissions.directoryUri;
-    //             console.log("uri: ", uri);
-    //             // Gets all files inside of selected directory
-    //             const files = await FileSystem.StorageAccessFramework.readDirectoryAsync(uri);
-    //             console.log("files in directory: ", files);
-    //             alert(`Files inside ${uri}:\n\n${JSON.stringify(files)}`);
-    //           }
-    //     } catch (error) {
-    //         console.log("Console error: ", error);
-    //     }
-    // }
-
-
 
     render() {
 
@@ -216,33 +165,34 @@ export class AudioList extends Component {
         return (
             <AudioContext.Consumer>
                 {({ dataProvider, isPlaying, runOnPressAnimation }) => {
-                    // console.log("dataProvider---> ",dataProvider);
-                    // console.log("runOnPressAnimation (AudioList) ---> ",runOnPressAnimation);
                     if (!dataProvider._data.length) {
                         return null;
                     }
                     return (
-                        <Screen style={{ flex: 1 }}>
+                        <Screen style={styles.container}>
+                            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                             <View style={styles.searchBar}>
                                 <TextInput
-                                    placeholder="Search"
+                                    placeholder="SEARCH"
                                     placeholderTextColor={Colors.FONT_LIGHT}
-                                    style={{ color: Colors.FONT_LIGHT, paddingHorizontal: 5 }}
+                                    style={{ color: Colors.FONT_LIGHT, paddingHorizontal: 5, fontWeight:'bold', fontSize: 18, letterSpacing: 1, width: '90%' }}
                                     onChangeText={this.updateSearchHandler}
                                     value={this.state.search}
+                                    
                                 />
+                                <View style={{justifyContent: 'center', alignItems: 'center', width: '10%'}}>
+                                    <AntDesign 
+                                        name="closecircle" 
+                                        size={24} 
+                                        color={Colors.FONT_LIGHT} 
+                                        onPress={this.clearSearchHandler}    
+                                    />
+                                </View>
                             </View>
-                            {/* <View>
-                                <Button title="Share" onPress={this.openShareDialogAsync} />
-                            </View> */}
+                            </TouchableWithoutFeedback>
+                            {/* [ (bottomTab Height(80) + (SearchBar(40) + searchBar Bottom padding(10) ) = 130 ] */}
+                            <View style={{height: HEIGHT - 140 - StatusBar.currentHeight}}>  
                             <RecyclerListView
-                                // onChange={onChange}
-                                // onScroll={Animated.event(
-                                //     [{ nativeEvent: { contentOffset: { y: this.scrollY } } }],
-                                //     { useNativeDriver: true }
-                                // )}
-                                // ref = {this.viewElement}
-                                // dataProvider={dataProvider}
                                 dataProvider={
                                     this.state.search ?
                                         new DataProvider((row1, row2) => row1 !== row2).cloneWithRows(this.state.displaySongs)
@@ -251,6 +201,7 @@ export class AudioList extends Component {
                                 rowRenderer={this.rowRenderer}
                                 extendedState={{ isPlaying }}
                             />
+                            </View>
                             <OptionModal
                                 options={[
                                     {
@@ -272,7 +223,6 @@ export class AudioList extends Component {
                                 }}
                                 visible={this.state.optionModalVisible}
                             />
-                            {/* <TabBarAnimation runOnPressAnimation={true} /> */}
                         </Screen>
                     )
                 }}
@@ -286,7 +236,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     tabBarStyle: {
         position: 'absolute',
@@ -302,13 +252,15 @@ const styles = StyleSheet.create({
     searchBar: {
         backgroundColor: Colors.FONT_DARK,
         height: 40,
-        width: WIDTH - 40,
+        width: WIDTH - 30,
         marginHorizontal: 10,
         marginBottom: 10,
         padding: 5,
         borderRadius: 15,
         alignSelf: 'center',
-        elevation: 20
+        elevation: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     }
 });
 

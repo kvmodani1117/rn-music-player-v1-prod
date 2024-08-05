@@ -6,6 +6,7 @@ import Colors from '../misc/Colors';
 import { AudioContext } from '../context/AudioProvider';
 import TabBarAnimation from '../components/TabBarAnimation';
 import { Ionicons } from '@expo/vector-icons';
+import Screen from '../components/Screen';
 // import PlayListDetail from '../components/PlayListDetail';
 
 let selectedPlayList = {};
@@ -117,9 +118,9 @@ const PlayList = ({ navigation }) => {
     }
 
 
-
+    // console.log("PlayList Screen!");
     return (
-        <>
+        <Screen>
             <ScrollView contentContainerStyle={styles.container}>
                 {playList.length ? playList.map(item => (
                     <TouchableOpacity
@@ -160,12 +161,13 @@ const PlayList = ({ navigation }) => {
                 onClose={() => setShowPlayList(false)}
             /> */}
             {/* <TabBarAnimation runOnPressAnimation={runOnPressAnimation} /> */}
-        </>
+        </Screen>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
+        // flex: 1,
         padding: 20
     },
     playListBanner: {

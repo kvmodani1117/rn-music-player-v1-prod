@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Dimensions } from 'react-native';
 import Colors from '../misc/Colors';
 import AudioListItem from '../components/AudioListItem';
 import { selectAudio } from '../misc/AudioController';
@@ -7,7 +7,10 @@ import { AudioContext } from '../context/AudioProvider';
 import OptionModal from '../components/OptionModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import Screen from '../components/Screen';
 
+
+const HEIGHT = Dimensions.get('window').height;
 const PlayListDetail = (props) => {
     //To know what is inside the playlist obj, go to createPlayList() in PlayList.js
     const context = useContext(AudioContext);
@@ -37,10 +40,10 @@ const PlayListDetail = (props) => {
         let playbackPosition = context.playbackPosition;
         let activePlayList = context.activePlayList;
 
-        if (context.isPlayListRunning && context.currentAudio.id === selectedItem.id) {
+        if (context.isPlayListRunning && context?.currentAudio?.id === selectedItem?.id) {
             //stop the audio first
-            await context.playbackObj.stopAsync();
-            await context.playbackObj.unloadAsync();
+            await context?.playbackObj?.stopAsync();
+            await context?.playbackObj?.unloadAsync();
 
             isPlaying = false;
             isPlayListRunning = false;
@@ -75,8 +78,6 @@ const PlayListDetail = (props) => {
         setAudios(newAudios);
         closeModal();
     }
-
-
 
 
     const removePlaylist = async () => {
@@ -122,12 +123,10 @@ const PlayListDetail = (props) => {
     }
 
 
-
-
     return (
         <>
             <View style={styles.container} >
-                <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, marginTop: 10 }}>
+                <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, marginVertical: 10 }}>
                     <Text style={styles.title} >{playList.title}</Text>
                     <TouchableOpacity onPress={removePlaylist} >
                         {/* <Text style={[styles.title, { color: 'red' }]} >Remove</Text> */}
@@ -136,18 +135,19 @@ const PlayListDetail = (props) => {
                         </View>
                     </TouchableOpacity>
                 </View>
+                <View>
                 {audios.length ? (
                     <FlatList
                         contentContainerStyle={styles.listContainer}
                         data={audios}
                         keyExtractor={item => item.id.toString()}
                         renderItem={({ item }) => (
-                            <View style={{ marginBottom: 10 }}>
+                            <View style={{ marginBottom: -5}}>
                                 <AudioListItem
                                     title={item.filename}
                                     duration={item.duration}
                                     isPlaying={context.isPlaying}
-                                    activeListItem={item.id === context.currentAudio.id}
+                                    activeListItem={item.id === context?.currentAudio?.id}
                                     onAudioPress={() => playAudio(item)}
                                     onOptionPress={() => {
                                         setSelectedItem(item);
@@ -160,10 +160,9 @@ const PlayListDetail = (props) => {
                         fontWeight: 'bold',
                         color: Colors.FONT_LIGHT,
                         fontSize: 23,
-                        padding: 50
-                        // justifyContent: 'center',
-                        // alignItems: 'center',
+                        padding: 50,
                     }}>No Audio</Text>}
+                </View>
             </View>
             <OptionModal
                 visible={modalVisible}
@@ -180,10 +179,12 @@ const PlayListDetail = (props) => {
 
 const styles = StyleSheet.create({
     container: {
+        height: HEIGHT - 60,
         alignItems: 'center',
     },
     listContainer: {
-        padding: 20,
+        paddingBottom: 90,
+
     },
     title: {
         textAlign: 'center',

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef, useCallback } from 'react';
-import { Dimensions, StyleSheet, Text, View, Animated, Image, FlatList } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, Animated, Image, FlatList, TouchableWithoutFeedback } from 'react-native';
 import Screen from '../components/Screen';
 import Colors from '../misc/Colors';
 import { MaterialCommunityIcons, Ionicons, Fontisto } from '@expo/vector-icons';
@@ -15,6 +15,7 @@ import BannerImage from '../misc/BannerImage';
 import AudioList from '../screens/AudioList';
 import AudioListItem from '../components/AudioListItem';
 import OptionModal from '../components/OptionModal';
+import { Entypo } from '@expo/vector-icons';
 // import MusicControl from 'react-native-music-control';
 
 const WIDTH = Dimensions.get('window').width;
@@ -25,20 +26,16 @@ const Player = (props) => {
     const { playbackPosition, playbackDuration, currentAudio } = context;
 
     const [currentPosition, setCurrentPosition] = useState(0);
-    const sampleAudio = [
-        {key: "audio1", audio: "audio1"},
-        {key: "audio2", audio: "audio2"},
-        {key: "audio3", audio: "audio3"},
-        {key: "audio4", audio: "audio4"},
-    ];
 
     const [randomInt, setRandomInt] = useState(1);
-    let actualImgPath = `../../assets/img3.png`;
+
     useEffect(() => {
         context.loadPreviousAudio();
         // console.log(context.currentAudio);
-        // console.log("1");
-        setRandomInt(Math.floor(Math.random() * 20) + 1);
+
+        // 43 is the number of images...
+        setRandomInt(Math.floor(Math.random() * 43) + 1);
+        // console.log("randomInt-->",randomInt);
         // console.log("BannerImage[1]---> ", BannerImage[randomInt].imgPath);
 
         return () => {
@@ -142,14 +139,14 @@ const Player = (props) => {
     };
 
     const handleNext = async () => {
-        setRandomInt(Math.floor(Math.random() * 20) + 1);
+        setRandomInt(Math.floor(Math.random() * 43) + 1);
         // console.log("randomInt-->",randomInt);
         await changeAudio(context, 'next');
 
     }
 
     const handlePrevious = async () => {
-        setRandomInt(Math.floor(Math.random() * 20) + 1);
+        setRandomInt(Math.floor(Math.random() * 43) + 1);
         // console.log("randomInt-->",randomInt);
         await changeAudio(context, 'previous');
 
@@ -185,7 +182,7 @@ const Player = (props) => {
             >
                 {/* <Text style={{backgroundColor: 'red'}}>{context.audioFiles[0].filename}</Text> */}
                 {/* <Text style={{backgroundColor: 'red'}}>{item.filename}</Text> */}
-                <AudioListItem
+                {/* <AudioListItem
                     title={item.filename}
                     // isPlaying={extendedState.isPlaying}  //context is like a state itself!
                     // activeListItem={context.currentAudioIndex === index}
@@ -195,19 +192,54 @@ const Player = (props) => {
                     //     this.currentItem = item;
                     //     this.setState({ ...this.state, optionModalVisible: true });
                     // }}
-                />
+                /> */}
+                <View style={styles.AudioListItemContainer}>
+                    <TouchableWithoutFeedback onPress={() => {
+                        handleAudioPress(item);
+                        setRandomInt(Math.floor(Math.random() * 43) + 1);
+                    }}>
+                        <View style={styles.leftContainer}>
+                            
+                            <View style={[styles.thumbnail]}>    
+                                <Text style={styles.thumbnailText}>
+                                    {/* {activeListItem ? 
+                                        renderPlayPauseIcon(isPlaying) : 
+                                        <Ionicons name="musical-notes" size={22} color={Colors.FONT_LIGHT} /> 
+                                    } */}
+                                    <Ionicons name="musical-notes" size={22} color={Colors.FONT_LIGHT} />
+                                </Text>
+                            </View>
+
+                            <View style={styles.titleContainer}>
+                                <Text numberOfLines={1} style={styles.title}>
+                                    {item.filename}
+                                    {/* {title} */}
+                                </Text>
+                                <Text numberOfLines={1} style={styles.timeText}>
+                                    {convertTime(item.duration)}
+                                    {/* {convertTime(duration)} */}
+                                </Text>
+                            </View>
+
+                        </View>
+                    </TouchableWithoutFeedback>
+                    <View style={styles.rightContainer}>
+                        <Entypo
+                            name="dots-three-vertical"
+                            size={20}
+                            color={Colors.FONT_MEDIUM}
+                            // onPress={onOptionPress}
+                            style={{ padding: 10 }}
+                        />
+                    </View>
+                </View>
             </Animatable.View>
         )
     }
 
-
+    // console.log("Player Component");
     return (
         <Screen>
-            {/* <Animatable.View
-                animation='bounceIn'
-                delay={400 * 2 + 100}
-
-            > */}
 
             <Animatable.View
                 // animation='bounceInRight'
@@ -253,8 +285,10 @@ const Player = (props) => {
                         color={context.isPlaying ? Colors.ACTIVE_BG : Colors.FONT_MEDIUM}
                     />  */}
                     <Image
-                        style={{ width: 240, height: 240, borderRadius: 30, margin: 15 }}
-                        // style={{ width: 260, height: 260, borderRadius: 30, margin: 20 }}
+                        // style={{ width: 240, height: 240, borderRadius: 30, margin: 15 }}
+                        style={{ width: 270, height: 270, borderRadius: 30, margin: 15 }}
+                        resizeMode={'cover'}
+                        // style={{ width: WIDTH, height: 300, borderRadius: 30 }}
                         // source={require("../../assets/img3.png")}
                         source={BannerImage[randomInt].imgPath}
                     // source={require(imgPath)}
@@ -265,10 +299,13 @@ const Player = (props) => {
                     duration={3000}
                     delay={200}
                     useNativeDriver={true}
+                    style={{alignSelf: 'center', marginBottom: 10}}
                 >
                     {/* <PlayerButton iconType='PREV' onPress={handlePrevious} iconColor={Colors.ACTIVE_FONT} /> */}
-                    <Text numberOfLines={1} style={styles.audioTitle}>
-                        {context.currentAudio.filename}
+                    <Text numberOfLines={1}>
+                        <Text style={styles.audioTitle}>
+                            {context.currentAudio.filename}
+                        </Text>
                     </Text>
                     {/* <PlayerButton iconType='NEXT' onPress={handleNext} iconColor={Colors.ACTIVE_FONT} /> */}
                 </Animatable.View>
@@ -283,7 +320,7 @@ const Player = (props) => {
                         <View style={{justifyContent: 'flex-start', alignSelf: 'center' , width: '82%'}}>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
                                 <View style={{width: '16%'}}>
-                                    <Text style={{ color: Colors.FONT_MEDIUM, textAlign: 'left', marginLeft: 10}} >{currentPosition ? currentPosition : renderCurrentTime()}</Text>
+                                    <Text style={{ color: Colors.FONT_MEDIUM, textAlign: 'left', marginLeft: 8}} >{currentPosition ? currentPosition : renderCurrentTime()}</Text>
                                 </View>
                                 <View style={{width: '68%'}}>
                                     <Slider
@@ -314,7 +351,7 @@ const Player = (props) => {
                                     />
                                 </View>
                                 <View style={{width: '16%'}}>
-                                    <Text style={{ color: Colors.FONT_MEDIUM, alignContent: 'flex-end', textAlign: 'right', marginRight: 10}} >{convertTime(context.currentAudio.duration)}</Text>
+                                    <Text style={{ color: Colors.FONT_MEDIUM, alignContent: 'flex-end', textAlign: 'right', marginRight: 8}} >{convertTime(context.currentAudio.duration)}</Text>
                                 </View>
                             </View>
                         </View>
@@ -325,7 +362,7 @@ const Player = (props) => {
                                 onPress={handlePlayPause}
                                 style={{ margin: 5 }} //initially marginHorizontal: 25
                                 iconType={context.isPlaying ? 'PLAY' : 'PAUSE'}
-                                iconColor={context.isPlaying ? Colors.ACTIVE_BG : Colors.ACTIVE_BG}
+                                iconColor={context.isPlaying ? '#fff' : '#fff'}
                                 size={50}
                             />
                             {/* <PlayerButton iconType='NEXT' onPress={handleNext} iconColor={Colors.ACTIVE_FONT} /> */}
@@ -333,16 +370,14 @@ const Player = (props) => {
                     </View>
                 </Animatable.View>
                 <View style={{height: 240}}>
-                        <FlatList
-                            data={context.audioFiles.slice(context.currentAudioIndex + 1, context.currentAudioIndex + 1+3)}
-                            renderItem={(data) => rowRenderer(data.item, 1)}
-                            contentContainerStyle={{ paddingBottom: 90 }}
-                        />
-                    </View>
+                    <FlatList
+                        data={context.audioFiles.slice(context.currentAudioIndex + 1, context.currentAudioIndex + 1+3)}
+                        renderItem={(data) => rowRenderer(data.item, 1)}
+                        contentContainerStyle={{ paddingBottom: 90 }}
+                    />
+                </View>
             </Animatable.View>
 
-            {/* <TabBarAnimation runOnPressAnimation={runOnPressAnimation} /> */}
-            {/* </Animatable.View> */}
         </Screen>
     )
 }
@@ -365,16 +400,18 @@ const styles = StyleSheet.create({
         // flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        margin: 5,
-        // backgroundColor: 'red'
+        margin: 2,  //initially 5
+        // backgroundColor: 'red',
+        // width: 350,
+        // height: 100
     },
     audioTitle: {
-        fontSize: 28,   //commented now... initially fontSize: 25
+        fontSize: 26,   //commented now... initially fontSize: 25
         fontWeight: 'bold',
         color: Colors.FONT_LIGHT,
-        padding: 10,  //commented now... initially padding: 15
+        // padding: 10,  //commented now... initially padding: 15
         alignSelf: 'center',
-        width: WIDTH - 40,
+        // width: WIDTH - 40,
     },
     audioContollers: {
         // width: WIDTH,   //commented just now...to check new alignment
@@ -389,12 +426,64 @@ const styles = StyleSheet.create({
         // marginBottom: 90,
     },
     audioPlayerContainer: {
-        // backgroundColor: '#ffffff',
         width: WIDTH - 40,
         alignSelf: 'center',
         borderRadius: 30,
         // elevation: 10,
         marginBottom: 10
+    },
+
+
+    // STYLES FOR NEXT AUDIOLIST THAT WILL BE PLAYED...
+    AudioListItemContainer: {
+        flexDirection: 'row',
+        alignSelf: 'center',
+        width: WIDTH - 40,
+        // backgroundColor: '#27153e',  //good one
+        padding: 8,
+        paddingLeft: 15,
+        // margin: 2,
+        // borderRadius: 20
+    },
+    leftContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1
+    },
+    rightContainer: {
+        flexBasis: 50,
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        // backgroundColor: 'pink'
+    },
+    thumbnail: {
+        height: 50,
+        flexBasis: 50,
+        backgroundColor: Colors.FONT_DARK,
+        // backgroundColor: '#270e43',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 25
+    },
+    thumbnailText: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        color: Colors.FONT_LIGHT
+    },
+    titleContainer: {
+        width: WIDTH - 180,
+        paddingLeft: 10
+    },
+    title: {
+        fontSize: 16,
+        color: Colors.FONT_LIGHT,
+        fontWeight: 'bold'
+    },
+    timeText: {
+        fontSize: 14,
+        color: Colors.FONT_MEDIUM,
     },
 })
 

@@ -1,5 +1,4 @@
 import { storeAudioForNextOpening } from "./Helper";
-import MusicControl from 'react-native-music-control';
 
 //play audio
 export const play = async (playbackObj, uri, lastPosition) => {
@@ -65,9 +64,6 @@ export const playNext = async (playbackObj, uri) => {
 }
 
 
-
-
-
 export const selectAudio = async (audio, context, playListInfo = {}) => {
     const {
         soundObj,
@@ -80,15 +76,10 @@ export const selectAudio = async (audio, context, playListInfo = {}) => {
 
 
     try {
-        // console.log("audio===>", audio);
-        // console.log("context--->", context);
         //playing the audio for the 1st time...
         if (soundObj === null) {
-            // console.log(" playbackObj---> ", playbackObj);
             const status = await play(playbackObj, audio.uri, audio.lastPosition);
             const index = audioFiles.findIndex(({ id }) => id === audio.id);
-            // console.log("status ---> ", status);
-            // const index = audioFiles.indexOf(audio);
             updateState(
                 context,
                 {
@@ -108,7 +99,6 @@ export const selectAudio = async (audio, context, playListInfo = {}) => {
 
         //pause the audio... if already playing...
         if (soundObj.isLoaded && soundObj.isPlaying && currentAudio.id === audio.id) {
-            // console.log("already playing");
             const status = await pause(playbackObj);
             return updateState(context, {
                 soundObj: status,
@@ -124,7 +114,6 @@ export const selectAudio = async (audio, context, playListInfo = {}) => {
             !soundObj.isPlaying &&
             currentAudio.id === audio.id
         ) {
-            // console.log("#############");
             const status = await resume(playbackObj);
             return updateState(context, { soundObj: status, isPlaying: true });
         }
@@ -135,7 +124,7 @@ export const selectAudio = async (audio, context, playListInfo = {}) => {
             const status = await playNext(playbackObj, audio.uri);
             const index = audioFiles.findIndex(({ id }) => id === audio.id);
             // console.log("soundObj====>",soundObj);
-            console.log("currentAudio====>",currentAudio);
+            // console.log("currentAudio====>",currentAudio);
             updateState(
                 context,
                 {
@@ -157,8 +146,6 @@ export const selectAudio = async (audio, context, playListInfo = {}) => {
     }
 
 }
-
-
 
 
 const selectAudioFromPlayList = async (context, selectPrevOrNext) => {
@@ -285,8 +272,6 @@ export const changeAudio = async (context, selectPrevOrNext) => {
     }
 
 }
-
-
 
 
 export const moveAudio = async (context, value) => {

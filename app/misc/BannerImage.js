@@ -59,4 +59,73 @@ export default {
     '20' : {
         imgPath: require('../../assets/img20.png'),
     },
+    '21' : {
+        imgPath: require('../../assets/img21.png'),
+    },
+    '22' : {
+        imgPath: require('../../assets/img22.png'),
+    },
+    '23' : {
+        imgPath: require('../../assets/img23.png'),
+    },
+    '24' : {
+        imgPath: require('../../assets/img24.png'),
+    },
+    '25' : {
+        imgPath: require('../../assets/img25.png'),
+    },
+    '26' : {
+        imgPath: require('../../assets/img26.png'),
+    },
+    '27' : {
+        imgPath: require('../../assets/img27.png'),
+    },
+    '28' : {
+        imgPath: require('../../assets/img28.png'),
+    },
+    '29' : {
+        imgPath: require('../../assets/img29.png'),
+    },
+    '30' : {
+        imgPath: require('../../assets/img30.png'),
+    },
+    '31' : {
+        imgPath: require('../../assets/img31.png'),
+    },
+    '32' : {
+        imgPath: require('../../assets/img32.png'),
+    },
+    '33' : {
+        imgPath: require('../../assets/img33.png'),
+    },
+    '34' : {
+        imgPath: require('../../assets/img34.png'),
+    },
+    '35' : {
+        imgPath: require('../../assets/img35.png'),
+    },
+    '36' : {
+        imgPath: require('../../assets/img36.png'),
+    },
+    '37' : {
+        imgPath: require('../../assets/img37.png'),
+    },
+    '38' : {
+        imgPath: require('../../assets/img38.png'),
+    },
+    '39' : {
+        imgPath: require('../../assets/img39.png'),
+    },
+    '40' : {
+        imgPath: require('../../assets/img40.png'),
+    },
+    '41' : {
+        imgPath: require('../../assets/img41.png'),
+    },
+    '42' : {
+        imgPath: require('../../assets/img42.png'),
+    },
+    '43' : {
+        imgPath: require('../../assets/img43.png'),
+    },
 };

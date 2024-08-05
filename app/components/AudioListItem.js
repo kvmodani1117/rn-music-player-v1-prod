@@ -89,10 +89,10 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         alignSelf: 'center',
-        width: WIDTH - 40,
+        width: WIDTH - 25,
         // backgroundColor: '#270e43', //used
         // backgroundColor: '#352648',
-        backgroundColor: '#27153e',  //good one
+        backgroundColor: Colors.AUDIO_LIST_BG,  //good one
         padding: 8,
         paddingLeft: 15,
         margin: 5,
